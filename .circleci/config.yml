@@ -264,16 +264,7 @@ jobs:
           root: .
           paths:
             - frontend/dist
-      - destroy_environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
-          command: |
-              aws s3 rm s3://udapeople-<< parameters.id >> --recursive
-              aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
-
-      - revert_migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+      
               
 workflows:
   default:
