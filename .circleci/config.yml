@@ -211,8 +211,7 @@ jobs:
           keys: [backend-build]
       - run:
           name: Run migrations
-          command: |    
-
+          command: | 
             cd backend
             npm install
             # Run and save the migration output
