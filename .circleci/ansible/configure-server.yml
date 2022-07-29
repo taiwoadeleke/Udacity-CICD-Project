@@ -23,6 +23,9 @@
         name: pip       
         state: latest
 
+    - name: Start pm2
+      command: pm2 start /server.js --name node-app
+
 
   # Get the environment variables from CircleCI and add to the EC2 instance
   environment:
