@@ -332,6 +332,8 @@ jobs:
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" )
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
+            
+             cd .circleci/ansible
             ansible-playbook -i inventory.txt deploy-backend.yml
             npm run build
       - run:
