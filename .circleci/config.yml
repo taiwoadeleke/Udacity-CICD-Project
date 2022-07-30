@@ -350,9 +350,17 @@ jobs:
                 return 0
                  #exit 0
             else
-                return 1
+                return 0
                  #exit 0
             fi
+
+      - run:
+          name: run playbook
+          working_directory: ./.circleci/ansible
+          command: |
+                echo "Contents  of the inventory.txt file is -------"
+                cat inventory.txt
+                ansible-playbook -i inventory.txt deploy-backend.yml
             
       - run:
           name: Frontend smoke test
