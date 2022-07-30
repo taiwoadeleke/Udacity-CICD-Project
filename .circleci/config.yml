@@ -335,13 +335,6 @@ jobs:
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" )
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-      
-      - run: 
-          name: Ensure backend playbook
-          working_directory: ./.circleci/ansible
-          command: |
-            ansible-playbook -i inventory.txt deploy-backend.yml
-            npm run build
 
       - run:
           name: Backend smoke test
