@@ -170,7 +170,6 @@ jobs:
           command: |
             cd .circleci/ansible
             aws ec2 describe-instances \
-              --filters "Name=tag:project,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory.txt
             cat inventory.txt
@@ -253,7 +252,6 @@ jobs:
           name: Get backend url
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:project,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
@@ -290,7 +288,8 @@ jobs:
           name: Install dependencies
           working_directory: /tmp
           command: |
-            apk add --update ansible curl rsync openssh nodejs npm
+            apk add --update ansible 
+            curl rsync openssh nodejs npm
             pip install awscli
       - run:
           name: Deploy backend
@@ -332,7 +331,6 @@ jobs:
           command: |
             cd backend
             export BACKEND_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:project,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
@@ -343,12 +341,11 @@ jobs:
           command: |
             cd backend
             export BACKEND_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:project,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-            if curl -s "${API_URL}/api/status" | grep "ok"
+            if curl -s -v --connect-timeout 30 --retry-connrefused 5 "${API_URL}" | grep "ok"
             then
                 return 0
                  #exit 0
