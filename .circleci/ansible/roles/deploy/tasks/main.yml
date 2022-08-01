@@ -1,8 +1,8 @@
 ---
   - name: Extract artifact
     unarchive:
-    src: ~/project/artifact.tar.gz
-    dest: /home/ubuntu
+      src: ~/project/artifact.tar.gz
+      dest: /home/ubuntu
   - name: "upgrade packages. "
     become: true
     apt:
