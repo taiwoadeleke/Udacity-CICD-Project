@@ -1,40 +1,58 @@
 ---
-  - name: "show remote environment"
-    shell: env
-
-  - name: "copy backend binaries"
-    become: yes
-    synchronize:
-      src: ../../backend/dist
-      dest: /home/ubuntu/uda_app
-      recursive: true
-
-  - name: "copy node_modules"
-    become: yes
-    synchronize:
-      src: ../../backend/node_modules
-      dest: /home/ubuntu/uda_app
-      recursive: true
-
-  - name: "delete anything that might already be running"
+  - name: Extract artifact
+    unarchive:
+    src: ~/project/artifact.tar.gz
+    dest: /home/ubuntu
+  - name: "upgrade packages. "
     become: true
-    command: pm2 delete all
-    ignore_errors: true
+    apt:
+      upgrade: "yes"
+  - name: "install dependencies."
+    become: true
+    apt:
+      name: ["nodejs", "npm"]
+      state: latest
+      update_cache: yes
+  - name: "install pm2"
+    become: true
+    npm:
+      name: pm2
+      global: yes
+      production: yes
+      state: present
+  - name: "npm install"
+    become: true
+    shell: |
+      npm install
+  
+  - name: load environment variables
+    become_method: sudo
+    become_user: root
+    become: yes
+    shell: |
+      ls -al
+      echo "NODE_ENV=production" >> .env
+      echo "ENVIRONMENT=production" >> .env
+      echo "TYPEORM_CONNECTION={{ lookup('env', 'TYPEORM_CONNECTION')}}" >> .env
+      echo "TYPEORM_ENTITIES={{ lookup('env', 'TYPEORM_ENTITIES')}}" >> .env
+      echo "TYPEORM_HOST={{ lookup('env', 'TYPEORM_HOST')}}" >> .env
+      echo "TYPEORM_PORT={{ lookup('env', 'TYPEORM_PORT')}}" >> .env
+      echo "TYPEORM_USERNAME={{ lookup('env', 'TYPEORM_USERNAME')}}" >> .env
+      echo "TYPEORM_PASSWORD={{ lookup('env', 'TYPEORM_PASSWORD')}}" >> .env
+      echo "TYPEORM_DATABASE={{ lookup('env', 'TYPEORM_DATABASE')}}" >> .env
+      echo "TYPEORM_MIGRATIONS={{ lookup('env', 'TYPEORM_MIGRATIONS')}}" >> .env
+      echo "TYPEORM_MIGRATIONS_DIR={{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}" >> .env
 
   - name: "start server"
     become: true
-    command: pm2 start -f ./main.js
-    #commands: pm2 start npm --start
-    args:
-      chdir: /home/ubuntu/uda_app/dist
     environment:
-     ENVIRONMENT: production
-     TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
-     TYPEORM_MIGRATIONS_DIR: "./migrations"
-     TYPEORM_MIGRATIONS: "./migrations/*.js"
-     TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
-     TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
-     TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
-     TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
-     TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
-     TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
+      ENVIRONMENT: production
+      #TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
+      ########TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
+      shell: |
+        pm2 start npm -- start
+    
+
+
+
+
