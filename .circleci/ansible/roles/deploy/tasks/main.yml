@@ -46,7 +46,7 @@
   - name: "start server"
     become: true
     environment:
-      ENVIRONMENT: production
+      path: ~/.env
       #TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
       ########TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
     shell: |
