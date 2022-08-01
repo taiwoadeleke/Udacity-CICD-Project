@@ -49,7 +49,7 @@
       ENVIRONMENT: production
       #TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
       ########TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
-      shell: |
+    shell: |
         pm2 start npm -- start
     
 
