@@ -444,7 +444,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               else
-              echo "$OldWorkflowID==$CurrentWorkflowID => nothing needs to be done..."
+              echo "$OldWorkflowID==$CurrentWorkflowID => nothing needs to be done!..."
               fi
 
 
