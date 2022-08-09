@@ -197,6 +197,7 @@ jobs:
           name: Install dependencies
           command: |
             cd ./.circleci/ansible
+            python -m pip install --upgrade pip
             apk add --update ansible
             ansible --version  
             pip install awscli  

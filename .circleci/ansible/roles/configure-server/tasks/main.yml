@@ -21,10 +21,10 @@
       state: latest
       update_cache: yes
 
-  - name: "install n"
+  - name: "install npm"
     become: yes
     npm:
-      name: n
+      name: npm
       global: yes
       production: yes
 
@@ -39,3 +39,20 @@
       global: yes
       production: yes
       state: present
+  - name: load environment variables
+    become_method: sudo
+    become_user: root
+    become: yes
+    shell: |
+      ls -al
+      echo "NODE_ENV=production" >> .env
+      echo "ENVIRONMENT=production" >> .env
+      echo "TYPEORM_CONNECTION={{ lookup('env', 'TYPEORM_CONNECTION')}}" >> .env
+      echo "TYPEORM_ENTITIES={{ lookup('env', 'TYPEORM_ENTITIES')}}" >> .env
+      echo "TYPEORM_HOST={{ lookup('env', 'TYPEORM_HOST')}}" >> .env
+      echo "TYPEORM_PORT={{ lookup('env', 'TYPEORM_PORT')}}" >> .env
+      echo "TYPEORM_USERNAME={{ lookup('env', 'TYPEORM_USERNAME')}}" >> .env
+      echo "TYPEORM_PASSWORD={{ lookup('env', 'TYPEORM_PASSWORD')}}" >> .env
+      echo "TYPEORM_DATABASE={{ lookup('env', 'TYPEORM_DATABASE')}}" >> .env
+      echo "TYPEORM_MIGRATIONS={{ lookup('env', 'TYPEORM_MIGRATIONS')}}" >> .env
+      echo "TYPEORM_MIGRATIONS_DIR={{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}" >> .env
