@@ -439,7 +439,7 @@ jobs:
 
             echo OldWorkflowID: "${OldWorkflowID}" 
             echo CurrentWorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
-      # Here is where you will add some code to rollback on failure.
+      # Here is where you will add some code to rollback on failure
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail 
