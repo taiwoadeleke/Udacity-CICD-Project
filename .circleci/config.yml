@@ -198,6 +198,7 @@ jobs:
           command: |
             cd ./.circleci/ansible
             python -m pip install --upgrade pip
+            pip3 -U paramiko
             apk add --update ansible
             ansible --version  
             pip install awscli  
