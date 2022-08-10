@@ -13,6 +13,14 @@
       name: ["nodejs", "npm"]
       state: latest
       update_cache: yes
+
+  - name: "install npm"
+    become: yes
+    npm:
+      name: npm
+      global: yes
+      production: yes
+      
   - name: "install pm2"
     become: true
     npm:
@@ -20,10 +28,6 @@
       global: yes
       production: yes
       state: present
-  - name: "npm install"
-    become: true
-    shell: |
-      npm install
   
   - name: load environment variables
     become_method: sudo
