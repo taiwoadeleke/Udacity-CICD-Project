@@ -201,7 +201,7 @@ jobs:
             apk add --update ansible
             ansible --version  
             pip install awscli  
-            pip3 install --upgrade paramiko
+            #pip3 install --upgrade paramiko
       - run:
           name: Configure server
           command: |
