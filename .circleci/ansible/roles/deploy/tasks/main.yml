@@ -35,7 +35,7 @@
     become: yes
     shell: |
       ls -al
-       echo ENVIRONMENT=production > backend/.env
+       echo ENVIRONMENT=production >> backend/.env
             echo TYPEORM_CONNECTION=postgres >> backend/.env
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
             echo TYPEORM_HOST=$TYPEORM_HOST >> backend/.env
@@ -46,7 +46,7 @@
             echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
             echo NODE_ENV=development >> "backend/.env"
-            cat ~/project/backend/.env
+            
 
   - name: "start server"
     become: true
