@@ -438,25 +438,23 @@ jobs:
             export OldWorkflowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
-            echo OldWorkflowID >> ~/OldWorkflowID.txt
-            cat ~/OldWorkflowID.txt
-            echo OldWorkflowID.txt>> "backend/.env"
-            cat ~/project/backend/.env
+            echo OldWorkflowID >> OldWorkflowID.txt
+            cat OldWorkflowID.txt
+            echo OldWorkflowID 
+
+            aws cloudformation deploy \
+                --template-file cloudfront.yml \
+                --stack-name InitialStack \
+                --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+                --tags project=udapeople
+
+            echo OldWorkflowID: "${OldWorkflowID}" 
+            echo CurrentWorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
+      
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/backend/.env 
-
-                  aws cloudformation deploy \
-                      --template-file cloudfront.yml \
-                      --stack-name InitialStack \
-                      --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
-                      --tags project=udapeople
-
-                echo OldWorkflowID "${OldWorkflowID}" 
-                  echo CurrentWorkflowID "${CIRCLE_WORKFLOW_ID:0:7}"
-      
-     
+            - project/.circleci/files/OldWorkflowID.txt
       # Here is where you will add some code to rollback on failure.
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -471,11 +469,12 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/project/backend/.env
+          at: .
       - run:
           name: Get old stack workflow id
           command: |
-              cat  ~/OldWorkflowID.txt
+              cd .circleci/files
+              cat  OldWorkflowID.txt
               OldWorkflowID=$(cat ~/OldWorkflowID.txt)
               #export OldWorkflowID=$(aws cloudformation \
                 #list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
@@ -492,18 +491,18 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-             if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
+             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
 
              #if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
               then
-              echo "deleting old version"
+              echo "deleting old buckets and stacks"
 
-              aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
-              aws s3 rb s3://udapeople-${OldWorkflowID} --recursive
+              aws s3 rm s3://${OldWorkflowID} --recursive 
+              aws s3 rb s3://${OldWorkflowID} --recursive
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               else
-              echo "$OldWorkflowID==$CurrentWorkflowID => nothing needs to be done!..."
+              echo "cannot cleanup"
               fi
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
