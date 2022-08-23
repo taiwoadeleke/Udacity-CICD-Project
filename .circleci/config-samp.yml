@@ -241,9 +241,14 @@ jobs:
           name: Update cloudfront distribution
           command: |
             # your code here
-      # Here's where you will add some code to rollback on failure  
+            # Here's where you will add some code to rollback on failure  
 
-cleanup:
+
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            then
+              # your code here
+            fi
+  cleanup:
     docker:
       # Docker image here
     steps:
@@ -257,11 +262,6 @@ cleanup:
       - run:
           name: Remove old stacks and files
           command: |
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-            then
-              # your code here
-            fi
-            
 
 workflows:
   default:
